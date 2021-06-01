@@ -94,7 +94,7 @@ def fetch_person(userId):
         dateTimeObj = datetime.now()
         logger.info('%s Person details for user_id %s fetched', dateTimeObj, userId)
         return jsonify({'success':True, 'results': return_json(person)})
-    return jsonify({'success':False, 'status': 400, 'message':'User ID does not exsist'})
+    return jsonify({'success':False, 'status': 400, 'message':'User ID does not exist'})
 
 @app.route('/noyo/person/<userId>/<int:version>', methods=['GET'])
 @app.route('/noyo/person/<userId>/<int:version>/', methods=['GET'])
@@ -111,8 +111,8 @@ def fetch_versioned_person(userId, version):
             logger.info('%s Person details for user_id %s and version %d fetched', dateTimeObj, userId, version)
             return jsonify({'success':True, 'results': return_json(person.versions[int(version)])})
         else:
-            return jsonify({'success':False,'status':400,'message':'Version does not exsist'})
-    return jsonify({'success':False, 'status': 400, 'message':'User Id does not exsist'})
+            return jsonify({'success':False,'status':400,'message':'Version does not exist'})
+    return jsonify({'success':False, 'status': 400, 'message':'User Id does not exist'})
 
 @app.route('/noyo/all_persons', methods=['GET'])
 @app.route('/noyo/all_persons/', methods=['GET'])
@@ -148,7 +148,7 @@ def update_person():
         dateTimeObj = datetime.now()
         logger.info('%s Entry for User ID %s updated', dateTimeObj, userId)
         return jsonify({'success':True, 'results': return_json(person)})
-    return jsonify({'success':False, 'status': 400, 'message':'User ID does not exsist, person was not updated'})
+    return jsonify({'success':False, 'status': 400, 'message':'User ID does not exist, person was not updated'})
 
 @app.route('/noyo/person/<userId>', methods=['DELETE'])
 @app.route('/noyo/person/<userId>/', methods=['DELETE'])
@@ -164,7 +164,7 @@ def delete_person(userId):
         dateTimeObj = datetime.now()
         logger.info('%s Entry for User ID %s deleted', dateTimeObj, userId)
         return jsonify({'success':True, 'results': return_json(person)})
-    return jsonify({'success':False, 'status': 400, 'message':'User ID does not exsist, person was not deleted'})
+    return jsonify({'success':False, 'status': 400, 'message':'User ID does not exist, person was not deleted'})
 
 def check_userId(userId):
     """
@@ -175,7 +175,7 @@ def check_userId(userId):
         if person:
             return True
     dateTimeObj = datetime.now()
-    logger.error('%s User ID %s does not exsist', dateTimeObj, userId)
+    logger.error('%s User ID %s does not exist', dateTimeObj, userId)
     return False
 
 def check_version(person, version):
@@ -186,7 +186,7 @@ def check_version(person, version):
         person.versions[int(version)]
     except IndexError:
         dateTimeObj = datetime.now()
-        logger.error('%s Version %d for User ID %s does not exsist', dateTimeObj, version, person.userId)
+        logger.error('%s Version %d for User ID %s does not exist', dateTimeObj, version, person.userId)
         return False
     return True
 
@@ -194,9 +194,9 @@ def return_json(person):
     row = []
     if isinstance(person, list):
         for p in person:
-            row.append({'userId':p.userId,'firstName':p.firstName,'lastName':p.lastName,'email':p.email, 'age':p.age})
+            row.append({'userId':p.userId,'firstName':p.firstName, 'middleName':p.middleName, 'lastName':p.lastName,'email':p.email, 'age':p.age})
     else:
-        row.append({'userId':person.userId,'firstName':person.firstName,'lastName':person.lastName,'email':person.email, 'age':person.age})
+        row.append({'userId':person.userId,'firstName':person.firstName, 'middleName':person.middleName, 'lastName':person.lastName,'email':person.email, 'age':person.age})
     return row
 
 @app.errorhandler(404)
