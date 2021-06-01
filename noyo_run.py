@@ -95,7 +95,7 @@ def fetch_person(userId):
         dateTimeObj = datetime.now()
         logger.info('%s Person details for user_id %s fetched', dateTimeObj, userId)
         return jsonify({'success':True, 'results': return_json(person)})
-    return jsonify({'success':False,'error':'User ID does not exsist'})
+    return jsonify({'success':False, 'status': 400, 'message':'User ID does not exsist'})
 
 @app.route('/noyo/person/<userId>/<int:version>', methods=['GET'])
 def fetch_versioned_person(userId, version):
@@ -112,7 +112,7 @@ def fetch_versioned_person(userId, version):
             return jsonify({'success':True, 'results': return_json(person.versions[int(version)])})
         else:
             return jsonify({'success':False,'error':'Version does not exsist'})
-    return jsonify({'success':False,'error':'User Id does not exsist'})
+    return jsonify({'success':False, 'status': 400, 'message':'User Id does not exsist'})
 
 @app.route('/noyo/all_persons', methods=['GET'])
 def fetch_all():
@@ -142,7 +142,7 @@ def update_person(userId):
         dateTimeObj = datetime.now()
         logger.info('%s Entry for User ID %s updated', dateTimeObj, userId)
         return jsonify({'success':True, 'results': return_json(person)})
-    return jsonify({'success':False,'error':'User ID does not exsist, person was not updated'})
+    return jsonify({{'success':False, 'status': 400, 'message':'User ID does not exsist, person was not updated'})
 
 @app.route('/noyo/person/<userId>', methods=['DELETE'])
 def delete_user(userId):
@@ -157,7 +157,7 @@ def delete_user(userId):
         dateTimeObj = datetime.now()
         logger.info('%s Entry for User ID %s deleted', dateTimeObj, userId)
         return jsonify({'success':True, 'results': return_json(person)})
-    return jsonify({'success':False,'error':'User ID does not exsist, person was not deleted'})
+    return jsonify({{'success':False, 'status': 400, 'message':'User ID does not exsist, person was not deleted'})
 
 
 
@@ -197,11 +197,24 @@ def return_json(person):
         row.append({'userId':person.userId,'firstName':person.firstName,'lastName':person.lastName,'email':person.email, 'age':person.age})
     return row
 
+@app.errorhandler(404)
+def page_not_found(error):
+	dateTimeObj = datetime.now()
+	logger.exception(dateTimeObj)
+	return render_template('404.html'),404
+
+@app.errorhandler(500)
+def internal_server_error(error):
+	dateTimeObj = datetime.now()
+	logger.exception(dateTimeObj)
+	return render_template('500.html'),500
+
 @app.errorhandler(405)
 def method_not_allowed_error(error):
 	dateTimeObj = datetime.now()
 	logger.exception(dateTimeObj)
 	return render_template('405.html'),405
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
