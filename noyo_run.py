@@ -124,25 +124,31 @@ def fetch_all():
     logger.info('%s Latest version of people fetched', dateTimeObj)
     return jsonify({'success':True, 'results':return_json(all_persons)})
 
-@app.route('/noyo/person/<userId>', methods=['PUT'])
-def update_person(userId):
+@app.route('/noyo/person/update')
+def render_update():
+    return render_template('update.html')
+
+@app.route('/noyo/person/updatePerson', methods=['POST'])
+def update_person():
     """
      Task5: Update a single person using their id
     """
+    userId = request.form['userId']
     validate = check_userId(userId)
     if validate:
         # validate all fields for strings vs numbers
         person = Person.query.get(userId)
-        person.firstName = request.json['first_name'] if request.json['first_name'] else person.firstName
-        person.middleName = request.json['middle_name'] if request.json['middle_name'] else person.middleName
-        person.lastName = request.json['last_name'] if request.json['first_name'] else person.lastName
-        person.email = request.json['email'] if request.json['email'] else person.email
-        person.age = request.json['age'] if request.json['age'] else person.age
+
+        person.firstName = request.form['firstName'] if (request.form['firstName'] or request.form['firstName'] != '') else person.firstName
+        person.middleName = request.form['middleName'] if request.form['middleName'] or request.form['middleName'] != '' else person.middleName
+        person.lastName = request.form['lastName'] if request.form['lastName'] or request.form['lastName'] != '' else person.lastName
+        person.email = request.form['email'] if request.form['email'] or request.form['email'] != '' else person.email
+        person.age = request.form['age'] if request.form['age'] else person.age
         db.session.commit()
         dateTimeObj = datetime.now()
         logger.info('%s Entry for User ID %s updated', dateTimeObj, userId)
         return jsonify({'success':True, 'results': return_json(person)})
-    return jsonify({{'success':False, 'status': 400, 'message':'User ID does not exsist, person was not updated'})
+    return jsonify({'success':False, 'status': 400, 'message':'User ID does not exsist, person was not updated'})
 
 @app.route('/noyo/person/<userId>', methods=['DELETE'])
 def delete_user(userId):
@@ -157,10 +163,7 @@ def delete_user(userId):
         dateTimeObj = datetime.now()
         logger.info('%s Entry for User ID %s deleted', dateTimeObj, userId)
         return jsonify({'success':True, 'results': return_json(person)})
-    return jsonify({{'success':False, 'status': 400, 'message':'User ID does not exsist, person was not deleted'})
-
-
-
+    return jsonify({'success':False, 'status': 400, 'message':'User ID does not exsist, person was not deleted'})
 
 
 def check_userId(userId):
