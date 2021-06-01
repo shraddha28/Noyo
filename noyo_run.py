@@ -8,8 +8,6 @@ from datetime import datetime
 import time
 import logging
 
-#from app import app
-
 FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s()] %(levelname)s %(message)s"
 logger = logging.getLogger('root')
 logging.basicConfig(format=FORMAT)
@@ -85,6 +83,7 @@ def create_person():
             logger.exception('Exception trace: ', dateTimeObj)
 
 @app.route('/noyo/person/<userId>', methods=['GET'])
+@app.route('/noyo/person/<userId>/', methods=['GET'])
 def fetch_person(userId):
     """
      Task2: Fetch the latest version of a single person using their id
@@ -98,6 +97,7 @@ def fetch_person(userId):
     return jsonify({'success':False, 'status': 400, 'message':'User ID does not exsist'})
 
 @app.route('/noyo/person/<userId>/<int:version>', methods=['GET'])
+@app.route('/noyo/person/<userId>/<int:version>/', methods=['GET'])
 def fetch_versioned_person(userId, version):
     """
      Task3: Fetch a single person using their id and a specified version
@@ -111,10 +111,11 @@ def fetch_versioned_person(userId, version):
             logger.info('%s Person details for user_id %s and version %d fetched', dateTimeObj, userId, version)
             return jsonify({'success':True, 'results': return_json(person.versions[int(version)])})
         else:
-            return jsonify({'success':False,'error':'Version does not exsist'})
+            return jsonify({'success':False,'status':400,'message':'Version does not exsist'})
     return jsonify({'success':False, 'status': 400, 'message':'User Id does not exsist'})
 
 @app.route('/noyo/all_persons', methods=['GET'])
+@app.route('/noyo/all_persons/', methods=['GET'])
 def fetch_all():
     """
      Task4: Fetch a list of all persons (latest version)
@@ -125,6 +126,7 @@ def fetch_all():
     return jsonify({'success':True, 'results':return_json(all_persons)})
 
 @app.route('/noyo/person/update')
+@app.route('/noyo/person/update/')
 def render_update():
     return render_template('update.html')
 
@@ -136,9 +138,7 @@ def update_person():
     userId = request.form['userId']
     validate = check_userId(userId)
     if validate:
-        # validate all fields for strings vs numbers
         person = Person.query.get(userId)
-
         person.firstName = request.form['firstName'] if (request.form['firstName'] or request.form['firstName'] != '') else person.firstName
         person.middleName = request.form['middleName'] if request.form['middleName'] or request.form['middleName'] != '' else person.middleName
         person.lastName = request.form['lastName'] if request.form['lastName'] or request.form['lastName'] != '' else person.lastName
@@ -151,7 +151,8 @@ def update_person():
     return jsonify({'success':False, 'status': 400, 'message':'User ID does not exsist, person was not updated'})
 
 @app.route('/noyo/person/<userId>', methods=['DELETE'])
-def delete_user(userId):
+@app.route('/noyo/person/<userId>/', methods=['DELETE'])
+def delete_person(userId):
     """
      Task6: Delete a single person using their id
     """
@@ -165,7 +166,6 @@ def delete_user(userId):
         return jsonify({'success':True, 'results': return_json(person)})
     return jsonify({'success':False, 'status': 400, 'message':'User ID does not exsist, person was not deleted'})
 
-
 def check_userId(userId):
     """
      Helper function to check for valid user ID
@@ -177,7 +177,6 @@ def check_userId(userId):
     dateTimeObj = datetime.now()
     logger.error('%s User ID %s does not exsist', dateTimeObj, userId)
     return False
-
 
 def check_version(person, version):
     """
@@ -202,9 +201,9 @@ def return_json(person):
 
 @app.errorhandler(404)
 def page_not_found(error):
-	dateTimeObj = datetime.now()
-	logger.exception(dateTimeObj)
-	return render_template('404.html'),404
+    dateTimeObj = datetime.now()
+    logger.exception(dateTimeObj)
+    return render_template('404.html'),404
 
 @app.errorhandler(500)
 def internal_server_error(error):
@@ -220,4 +219,5 @@ def method_not_allowed_error(error):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)
+    db.create_all()
+    app.run(host='0.0.0.0', debug=False)
