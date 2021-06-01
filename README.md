@@ -9,8 +9,8 @@
 
 ## RUNNING THE APPLICATION:
 ```
-•	This application requires **Python3**
-•	cd /Noyo/
+• This application requires Python3
+• cd /Noyo/
 • ./run.sh
 
 Now, once the application service is up and running, it can be tested using web interface by going to a local
@@ -37,8 +37,10 @@ Enter the userId for the person who's details you wish to update followed by the
 - Task6 of the specification is to delete a person entry in the DB with the specified userID.
 The method used here is "DELETE", and can be tested using Postman with DELETE request to url http://localhost:5000/noyo/person/<str:userId>. If userId does not exist, user will be alerted with an error message
 ```
+```
 
 Error Handlers in the code
 	404(Page Not Found)
 	405 (Method Not Allowed)
 	500 (Internal Server Error)
+```
