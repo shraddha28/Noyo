@@ -1,0 +1,7 @@
+Flask
+Flask-SQLAlchemy
+SQLAlchemy
+SQLAlchemy-Continuum
+SQLAlchemy-Utils
+datetime
+

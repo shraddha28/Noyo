@@ -1,0 +1,35 @@
+<doctype html>
+<title>New Person</title>
+<h2><center>Welcome</center><br></h2>
+<h3>{{errorMessage}}</h3>
+<h4>Please enter your user id</h4>
+<form method="PUT" action="/noyo/person/update">
+    <dl>
+    <p> User ID:
+			<input name="userId" value="" type="text" minlength="5" maxlength="20" autocomplete="off">
+		</p>
+    <h4>Please enter details to be updated</h4>
+		<p> First Name:
+			<input name="firstName" value="" type="text" autocomplete="off"
+			 pattern="^[A-Za-z]+">
+		</p>
+    <p> Middle Name:
+			<input name="middleName" value="" type="text" autocomplete="off"
+			 pattern="^[A-Za-z]+">
+		</p>
+    <p> Last Name:
+			<input name="lastName" value="" type="text" autocomplete="off"
+			 pattern="^[A-Za-z]+">
+		</p>
+    <p> Email:
+			<input name="email" value="" type="text" autocomplete="off"
+			 pattern="[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+">
+		</p>
+		<p> Age:
+			<input name="age" value="" type="number" autocomplete="off" min=1 max=108>
+		</p>
+    </dl>
+    <p>
+		<input type="submit" value="Submit">
+	</p>
+</form>
